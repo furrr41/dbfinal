@@ -3,7 +3,7 @@
 		<!-- 页面头部 -->
 		<header>
 			<!-- 菜单图标 -->
-			<img src="@/assets/fflogo.png" alt="Logo" class="minilogo" />
+			<img src="@/assets/fflogo.png" alt="Logo" class="minilogo" @click="goHome"/>
 			<!-- 导航菜单 -->
 			<nav class="nav-container">
 				<ul>
@@ -44,7 +44,7 @@
 									:to="{ name: 'Film Introduction', params: { id: scope.row.workId, ordering: scope.row.ordering } }">{{ scope.row.title }}</router-link>
 							</template>
 						</el-table-column>
-						<el-table-column prop="startyear" label="上映年份"></el-table-column>
+						<el-table-column prop="startYear" label="上映年份"></el-table-column>
 						<el-table-column prop="genres" label="类型"></el-table-column>
 						<el-table-column prop="region" label="地区"></el-table-column>
 						<el-table-column prop="workId" label="编号"></el-table-column>

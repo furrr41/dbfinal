@@ -1,9 +1,9 @@
 <template>
-	<div class="search">
+	<div class="film-rating">
 		<!-- 页面头部 -->
 		<header>
 			<!-- 菜单图标 -->
-			<img src="@/assets/fflogo.png" alt="Logo" class="minilogo" />
+			<img src="@/assets/fflogo.png" alt="Logo" class="minilogo" @click="goHome"/>
 			<!-- 导航菜单 -->
 			<nav class="nav-container">
 				<ul>
@@ -24,27 +24,85 @@
 				</div>
 			</div>
 		</header>
-		
+
 		<!-- 页面主体内容 -->
 		<main>
-			<h1>Search</h1>
-			<!-- 其他内容可以在这里添加 -->
+			<h1>FindFilms TOP-100</h1> <br />
+			<div class="card-container">
+				<el-card class="box-card" v-for="(movie, index) in paginatedMovies" :key="movie.workId" @click="goToFilmIntroduction(movie.workId)">
+					<div class="rank">{{ index + 1 + (currentPage - 1) * pageSize }}</div>
+					<div class="movie-details">
+						<p><strong>标题:</strong> {{ movie.title }}</p>
+						<p><strong>评分:</strong> {{ movie.rating }}</p>
+						<p><strong>上映年份:</strong> {{ movie.startYear }}</p>
+						<p><strong>编号:</strong> {{ movie.workId }}</p>
+					</div>
+				</el-card>
+			</div>
+			<el-pagination
+				:current-page="currentPage"
+				:page-size="pageSize"
+				:total="totalMovies"
+				layout="prev, pager, next"
+				@current-change="handlePageChange"
+			>
+			</el-pagination>
 		</main>
 	</div>
 </template>
 
 <script>
+	import axios from 'axios';
+
 	export default {
-		name: 'Search',
+		name: 'FilmRating',
 		data() {
 			return {
 				user: JSON.parse(localStorage.getItem('user')) || null, // 从localStorage获取用户信息
+				movies: [], // 存储电影信息
+				currentPage: 1,
+				pageSize: 10, // 每页显示的电影数量
+			};
+		},
+		computed: {
+			paginatedMovies() {
+				const start = (this.currentPage - 1) * this.pageSize;
+				return this.movies.slice(start, start + this.pageSize);
+			},
+			totalMovies() {
+				return this.movies.length;
 			}
 		},
+		created() {
+			this.fetchMovies();
+		},
 		methods: {
-			
+			fetchMovies() {
+				axios.get('http://123.60.134.9:8080/api/movies/top-rated-with-number', {
+						params: {
+							number: 100
+						}
+					})
+					.then(response => {
+						this.movies = response.data; // 假设返回的数据是电影对象的数组
+					})
+					.catch(error => {
+						console.error('Error fetching movies:', error);
+					});
+			},
 			goHome() {
 				this.$router.push('/');
+			},
+			logout() {
+				localStorage.removeItem('user');
+				this.user = null;
+				this.$router.push('/login');
+			},
+			handlePageChange(page) {
+				this.currentPage = page;
+			},
+			goToFilmIntroduction(workId) {
+				this.$router.push({ name: 'FilmIntroduction', params: { id: workId } });
 			}
 		}
 	};
@@ -55,7 +113,6 @@
 		margin: 0;
 		padding: 0;
 		box-sizing: border-box;
-		/* 确保所有元素的边距和内边距被包含在元素的总宽度和高度内 */
 	}
 
 	header {
@@ -66,14 +123,12 @@
 		background: #e6e7f9;
 	}
 
-	/* 导航菜单容器样式 */
 	.nav-container {
 		flex: 1;
 		display: flex;
 		justify-content: center;
 	}
 
-	/* 导航菜单样式 */
 	nav ul {
 		list-style: none;
 		display: flex;
@@ -87,22 +142,17 @@
 		color: #555;
 		padding: 5px;
 		transition: color 0.3s, border-bottom 0.3s;
-		/* 添加过渡效果 */
 	}
 
 	nav a:hover {
 		color: #8a2be2;
-		/* 悬停时字体变色 */
 		border-bottom: 2px solid #8a2be2;
-		/* 悬停时添加底部边框 */
 	}
 
-	/* 用户账户链接和头像容器样式 */
 	.account {
 		display: flex;
 		align-items: center;
 		gap: 10px;
-		/* 调整链接和头像之间的间距 */
 	}
 
 	.account a {
@@ -114,7 +164,6 @@
 		display: flex;
 		align-items: center;
 		gap: 10px;
-		/* 调整头像和文本之间的间距 */
 	}
 
 	.profile img {
@@ -122,13 +171,12 @@
 		width: 40px;
 		border-radius: 50%;
 		background-color: #d8d8d8;
-		/* 设置背景颜色，以便更好地显示圆形 */
 		padding: 5px;
-		/* 调整内边距 */
 	}
 
 	.minilogo {
 		height: 50px;
+		cursor: pointer;
 	}
 
 	.account>a:hover {
@@ -137,5 +185,38 @@
 
 	main {
 		padding: 20px;
+	}
+
+	.card-container {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 20px;
+		max-width: 1000px;
+		margin: 0 auto;
+	}
+
+	.box-card {
+		width: 100%;
+		cursor: pointer;
+	}
+
+	.rank {
+		font-size: 24px;
+		color: #e91e63;
+		font-weight: bold;
+		margin-bottom: 10px;
+	}
+
+	.movie-details p {
+		margin: 5px 0;
+	}
+
+	.text {
+		font-size: 14px;
+	}
+
+	.item {
+		padding: 18px 0;
 	}
 </style>

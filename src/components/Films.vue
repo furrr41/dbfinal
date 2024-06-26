@@ -3,7 +3,7 @@
 		<!-- 页面头部 -->
 		<header>
 			<!-- 菜单图标 -->
-			<img src="@/assets/fflogo.png" alt="Logo" class="minilogo" />
+			<img src="@/assets/fflogo.png" alt="Logo" class="minilogo" @click="goHome"/>
 			<!-- 导航菜单 -->
 			<nav class="nav-container">
 				<ul>
@@ -115,7 +115,7 @@
 			};
 		},
 		created() {
-			console.log("Films组件被创建了，好玩吗？我快死了。\n “我也快似了，恨来自zzz”")
+			console.log("Films组件被创建了，好玩吗？我快死了。")
 		},
 		computed: {
 			paginatedMovies() {

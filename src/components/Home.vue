@@ -72,7 +72,7 @@
 
 		<!-- 添加导航按钮 -->
 		<div v-if="user && user.userName === 'admin'" class="navigation-button">
-			<el-button type="primary" @click="navigateToZSGC">增删改功能</el-button>
+			<el-button type="primary" @click="navigateToZSGC">管理员后台</el-button>
 		</div>
 	</div>
 </template>

@@ -3,7 +3,7 @@
 		<!-- 页面头部 -->
 		<header>
 			<!-- 菜单图标 -->
-			<img src="@/assets/fflogo.png" alt="Logo" class="minilogo" />
+			<img src="@/assets/fflogo.png" alt="Logo" class="minilogo" @click="goHome"/>
 			<!-- 导航菜单 -->
 			<nav class="nav-container">
 				<ul>
@@ -51,7 +51,7 @@
 				<div class="input-container">
 					<el-input type="textarea" :rows="2" placeholder="请输入内容" v-model="textarea">
 					</el-input>
-					<el-button type="success" icon="el-icon-check" circle class="submit-button"></el-button>
+					<el-button type="success" icon="el-icon-check" circle class="submit-button" @click="submitComment"></el-button>
 				</div>
 				<el-card class="box-card" v-for="comment in paginatedComments" :key="comment.id">
 					<div class="comment">
@@ -72,6 +72,7 @@
 
 <script>
 	import axios from 'axios';
+	import qs from 'qs';
 	
 	export default {
 		name: 'MovieDetail',
@@ -126,6 +127,40 @@
 				})
 				.catch(error => {
 					console.error('Error fetching movie details:', error);
+				});
+			},
+			submitComment() {
+				if (!this.user) {
+					this.$message.error('请先登录再发表评论');
+					return;
+				}
+
+				const filmId = this.themovie.workId;
+				const userName = this.user.userName;
+				const content = this.textarea;
+
+				if (!content.trim()) {
+					this.$message.error('评论内容不能为空');
+					return;
+				}
+
+				axios.post('http://123.60.134.9:8080/api/user/comment', qs.stringify({
+					filmId,
+					userName,
+					content
+				}))
+				.then(response => {
+					this.$message.success('评论提交成功');
+					this.thecomments.push({
+						id: Date.now(), // 模拟一个评论ID，可以在后端生成并返回
+						content
+					});
+					this.textarea = '';
+					this.currentPage = Math.ceil(this.totalComments / this.pageSize); // 刷新到最后一页
+				})
+				.catch(error => {
+					this.$message.error('评论提交失败，请重试');
+					console.error('Error submitting comment:', error);
 				});
 			},
 			logout() {
@@ -258,6 +293,8 @@
 		justify-content: center;
 		align-items: flex-start;
 		gap: 20px;
+		max-width: 1200px;
+		margin: 0 auto;
 	}
 
 	.movie-image img {
@@ -280,6 +317,8 @@
 
 	.comments-section {
 		margin-top: 40px;
+		max-width: 1200px;
+		margin: 40px auto 0 auto;
 	}
 
 	.comment {
@@ -308,6 +347,8 @@
 		align-items: center;
 		margin-top: 20px;
 		column-gap: 20px;
+		max-width: 1200px;
+		margin: 40px auto 0 auto;
 	}
 
 	.submit-button {
