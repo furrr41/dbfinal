@@ -34,7 +34,7 @@
 			doSubmit() {
 				let url = "http://123.60.134.9:8080/api/user/regist";
 				let params = {
-					username: this.username,
+					userName: this.username,
 					password: this.password
 				};
 				axios.post(url, qs.stringify(params))

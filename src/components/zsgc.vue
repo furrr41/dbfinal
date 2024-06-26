@@ -28,8 +28,26 @@
 		<!-- 页面主体内容 -->
 		<main>
 			<h1>增删改操作</h1>
+			<div class="controls-container">
+				<!-- 返回按钮 -->
+				<el-button size="small" round v-if="isSearchActive" type="primary" plain @click="handleClear">返回</el-button>
+				<div class="search-container">
+					<el-input
+						placeholder="请输入电影名称"
+						v-model="searchQuery"
+						clearable
+						@clear="handleClear"
+						@input="handleInput"
+						class="search-input"
+					>
+						<el-button slot="append" icon="el-icon-search" @click="searchMovie"></el-button>
+					</el-input>
+				</div>
+			</div>
+			<br />
 			<!-- 添加按钮 -->
 			<el-button type="success" plain @click="showAddDialog">添加电影</el-button>
+			<br />
 			<!-- 表格显示 -->
 			<div class="table-container">
 				<el-table :data="movies" border style="width: 100%">
@@ -118,7 +136,9 @@
 					workId: '',
 					language: '',
 					startyear: ''
-				}
+				},
+				searchQuery: '',
+				isSearchActive: false, // 控制是否在搜索状态
 			};
 		},
 		created() {
@@ -134,9 +154,28 @@
 					})
 					.then(response => {
 						this.movies = response.data; // 假设返回的数据是电影对象的数组
+						this.isSearchActive = false; // 确保非搜索状态
 					})
 					.catch(error => {
 						console.error('Error fetching movies:', error);
+					});
+			},
+			searchMovie() {
+				if (!this.searchQuery) {
+					this.fetchMovies();
+					return;
+				}
+				axios.get('http://123.60.134.9:8080/api/movie/getFilmByTitle', {
+						params: {
+							title: this.searchQuery
+						}
+					})
+					.then(response => {
+						this.movies = response.data; // 假设返回的数据是电影对象的数组
+						this.isSearchActive = true; // 进入搜索状态
+					})
+					.catch(error => {
+						console.error('Error searching movies:', error);
 					});
 			},
 			editMovie(movie) {
@@ -175,6 +214,15 @@
 				// 例如：axios.post('http://api-url', this.newMovie)
 				this.movies.push(this.newMovie); // 将新电影信息添加到电影列表
 				this.addDialogVisible = false; // 关闭对话框
+			},
+			handleClear() {
+				this.searchQuery = '';
+				this.fetchMovies();
+			},
+			handleInput() {
+				if (!this.searchQuery) {
+					this.fetchMovies();
+				}
 			},
 			logout() {
 				// 移除localStorage中的用户信息
@@ -270,5 +318,22 @@
 		width: 1500px;
 		margin: 0 auto;
 		/* 居中对齐 */
+	}
+
+	.controls-container {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		margin-bottom: 20px;
+	}
+
+	.search-container {
+		display: flex;
+		justify-content: center; /* 水平居中对齐 */
+		flex: 1;
+	}
+
+	.search-input {
+		width: 1000px;
 	}
 </style>
