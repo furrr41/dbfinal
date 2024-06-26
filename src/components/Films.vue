@@ -44,7 +44,7 @@
 			<div class="movie-container">
 				<div class="movie-grid">
 					<div v-for="movie in paginatedMovies" :key="movie.workId" class="movie-item">
-						<img src="@/assets/poster.jpg" @click="goToDetail(movie.workId)" />
+						<img src="@/assets/poster.jpg" @click="goToDetail(movie.workId, movie.ordering)" />
 						<p>{{ movie.title }}</p> <br />
 						<p>{{ movie.workId }}</p>
 					</div>
@@ -156,11 +156,12 @@
 				this.isIndeterminate = checkedCount > 0 && checkedCount < this.types.length;
 				this.fetchMovies();
 			},
-			goToDetail(id) {
+			goToDetail(workId, ordering) {
 				this.$router.push({
 					name: 'Film Introduction',
 					params: {
-						id
+						id: workId,
+						ordering: ordering
 					}
 				});
 			},

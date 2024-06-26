@@ -4,8 +4,9 @@
 		<div class="register-form">
 			<h1>Registration</h1>
 			<p>Start your films journey!</p>
-			<form @submit.prevent="submitForm">
-				<input type="text" v-model="name" placeholder="Name" required />
+			<!-- <form @submit.prevent="submitForm"> -->
+			<form @submit.prevent="doSubmit">
+				<input type="text" v-model="username" placeholder="Username" required />
 				<input type="password" v-model="password" placeholder="Password" required />
 				<button type="submit">Register</button>
 			</form>
@@ -16,20 +17,40 @@
 </template>
 
 <script>
+	import axios from 'axios';
+	import qs from 'qs';
+
 	export default {
 		data() {
 			return {
-				name: '',
-				email: '',
-				password: '',
-				confirmPassword: ''
+				username: '',
+				password: ''
 			};
 		},
+		created() {
+			console.log("(｡･∀･)ﾉﾞ嗨亲亲你好，注册我们的帐号了吗？\n—————恨来自zyq");
+		},
 		methods: {
-			submitForm() {
-				// 这里应该调用后端 API 来处理注册
-				// 你可以在这里添加一个请求到后端的示例
-				console.log('Form submitted:', this.name, this.email, this.password, this.confirmPassword);
+			doSubmit() {
+				let url = "http://123.60.134.9:8080/api/user/regist";
+				let params = {
+					username: this.username,
+					password: this.password
+				};
+				axios.post(url, qs.stringify(params))
+					.then(response => {
+						console.log(response.data);
+						if (response.data.status === 'success') {
+							alert('Registration successful. Please log in.');
+							this.$router.push('/login');
+						} else {
+							alert('Registration failed. Please try again.');
+						}
+					})
+					.catch(e => {
+						console.error('Error registering:', e);
+						alert('Registration failed. Please try again.');
+					});
 			},
 			goHome() {
 				this.$router.push('/');
@@ -85,10 +106,10 @@
 		box-sizing: border-box;
 		/* 确保 padding 包含在宽度内 */
 	}
-	
+
 	input:focus {
-	  border: 2px solid #761ed4;
-	  outline: none;
+		border: 2px solid #761ed4;
+		outline: none;
 	}
 
 	button {
@@ -112,13 +133,13 @@
 	}
 
 	p {
-		color:#a9afba;
+		color: #a9afba;
 		margin: 20px 0;
 	}
 
 	.logo {
 		position: absolute;
-		width:20vw;
+		width: 20vw;
 		left: 40px;
 		top: 15px;
 		cursor: pointer;

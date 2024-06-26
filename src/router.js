@@ -8,6 +8,7 @@ import Search from './components/Search.vue';
 import Films from './components/Films.vue';
 import Actors from './components/Actors.vue';
 import FilmIntroduction from './components/FilmIntroduction.vue';
+import ZSGC from './components/zsgc.vue';
 
 
 Vue.use(Router);
@@ -52,6 +53,11 @@ export default new Router({
 			path: '/film_introduction',
 			name: 'Film Introduction',
 			component: FilmIntroduction
+		},
+		{
+			path: '/zsgc',
+			name: 'ZSGC',
+			component: ZSGC
 		},
 	]
 });

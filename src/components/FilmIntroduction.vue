@@ -53,7 +53,7 @@
 					</el-input>
 					<el-button type="success" icon="el-icon-check" circle class="submit-button"></el-button>
 				</div>
-				<el-card class="box-card" v-for="comment in paginatedComments" :key="commentId">
+				<el-card class="box-card" v-for="comment in paginatedComments" :key="comment.id">
 					<div class="comment">
 						<!-- <img :src="comment.avatar" alt="Avatar" class="avatar" /> -->
 						<div class="comment-content">
@@ -74,8 +74,6 @@
 	import axios from 'axios';
 	
 	export default {
-		
-		
 		name: 'MovieDetail',
 		data() {
 			return {
@@ -85,12 +83,10 @@
 				thecrewnames: [],
 				thecomments: [],
 				
-	
 				rating: 0,
 				textarea: '',
 				currentPage: 1,
 				pageSize: 8, // 每页显示8条评论
-				commentId: null,
 			};
 		},
 		created() {
@@ -109,27 +105,34 @@
 		},
 		methods: {
 			fetchMovieDetails() {
-			        const workId = this.$route.params.id;
-					console.log("workId是：", workId);
-			        axios.get(`http://123.60.134.9:8080/api/movies/getFilmById`, {
-			            params: {
-			              id: workId
-			            }
-			          })
-			          .then(response => {
-			            // this.movie = response.data;
-			            console.log(response.data);
-						this.themovie = response.data.film;
-						console.log("themovie如下：\n:", this.themovie);
-						this.thecrewnames = response.data.crewnames;
-						console.log("thecrewnames如下：\n:", this.thecrewnames);
-						this.thecomments = response.data.comments;
-						console.log("thecomments如下：\n:", this.thecomments);
-			          })
-			          .catch(error => {
-			            console.error('Error fetching movie details:', error);
-			          });
-			      },
+				const workId = this.$route.params.id;
+				const ordering = this.$route.params.ordering;
+				console.log("workId是：", workId);
+				console.log("ordering是：", ordering);
+				axios.get(`http://123.60.134.9:8080/api/movies/getFilmById`, {
+					params: {
+						id: workId,
+						ordering: ordering
+					}
+				})
+				.then(response => {
+					console.log(response.data);
+					this.themovie = response.data.film;
+					console.log("themovie如下：\n:", this.themovie);
+					this.thecrewnames = response.data.crewnames;
+					console.log("thecrewnames如下：\n:", this.thecrewnames);
+					this.thecomments = response.data.comments;
+					console.log("thecomments如下：\n:", this.thecomments);
+				})
+				.catch(error => {
+					console.error('Error fetching movie details:', error);
+				});
+			},
+			logout() {
+			  localStorage.removeItem('user');
+			  this.user = null;
+			  this.$router.push('/login');
+			},
 			
 			goHome() {
 				this.$router.push('/');

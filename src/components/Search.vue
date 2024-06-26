@@ -38,9 +38,10 @@
 				<h2>搜索结果：</h2>
 				<div class="table-container">
 					<el-table :data="movies" border style="width: 100%">
-						<el-table-column prop="title" label="电影名" >
+						<el-table-column prop="title" label="电影名">
 							<template slot-scope="scope">
-								<router-link :to="{ name: 'Film Introduction', params: { id: scope.row.workId }}">{{ scope.row.title }}</router-link>
+								<router-link
+									:to="{ name: 'Film Introduction', params: { id: scope.row.workId, ordering: scope.row.ordering } }">{{ scope.row.title }}</router-link>
 							</template>
 						</el-table-column>
 						<el-table-column prop="startyear" label="上映年份"></el-table-column>
@@ -200,7 +201,8 @@
 
 	.table-container {
 		width: 1000px;
-		margin: 0 auto; /* 居中对齐 */
+		margin: 0 auto;
+		/* 居中对齐 */
 	}
 
 	.search-results ul {

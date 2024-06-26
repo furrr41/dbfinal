@@ -45,7 +45,12 @@
 			
 			goHome() {
 				this.$router.push('/');
-			}
+			},
+			logout() {
+			  localStorage.removeItem('user');
+			  this.user = null;
+			  this.$router.push('/login');
+			},
 		}
 	};
 </script>
